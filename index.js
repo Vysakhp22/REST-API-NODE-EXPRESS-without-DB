@@ -9,4 +9,20 @@ app.get('/api/courses', (req,res) =>{
     res.send('MCA');
 });
 
-app.listen(3000, () => console.log('Listening to the port 3000') )
+app.get('/api/courses/:id', (req, res) => {
+    res.send(req.params.id);
+});
+
+app.get('/api/post/:id/:name', (req, res) => {
+    res.send(req.params);
+});
+
+//query parameter
+app.get('/api/post/:id/', (req, res) => {
+    res.send(req.query);
+});
+
+
+//PORT
+const port = process.env.port || 3000;
+app.listen(port, () => console.log(`Listening to the port ${port}...`) )
