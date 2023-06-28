@@ -22,7 +22,10 @@ app.get('/api/courses', (req, res) => {
 
 app.get('/api/courses/:id', (req, res) => {
     const course = courses.find(v => v.id === parseInt(req.params.id));
-    if (!course) res.status(404).send('couldnot find any courses');
+    if (!course) {
+        res.status(404).send('couldnot find any courses');
+        return;
+    }
     res.send(course);
 });
 
@@ -64,7 +67,7 @@ app.put('/api/courses/:Id', (req, res) => {
     const result = courses.find(v => v.id === parseInt(req.params.Id));
     if (!result) res.status(404).send('couldnot find any courses');
     //check valid
-    const {error} = validateCourse(req.body.name);
+    const { error } = validateCourse(req.body.name);
     console.log(error)
     if (error) {
         res.status(400).send(error);
@@ -77,12 +80,25 @@ app.put('/api/courses/:Id', (req, res) => {
 });
 
 //fun to validate course
-function validateCourse(course){
+function validateCourse(course) {
     const schema = Joi.object({
         name: Joi.string().required().min(3)
     });
     return schema.validate({ name: course });
 }
+
+//DELETE endpoint
+
+app.delete('/api/courses/:Id', (req, res) => {
+    const course = courses.find(v => v.id === parseInt(req.params.Id));
+    if (!course) {
+        res.status(404).send('couldnot find any courses');
+        return;
+    }
+    const index = courses.indexOf(course);
+    courses.splice(index, 1);
+    res.send(course);
+});
 
 
 //PORT
