@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/courses', (req, res) => {
-    res.send('MCA');
+    res.send(courses);
 });
 
 app.get('/api/courses/:id', (req, res) => {
@@ -31,7 +31,7 @@ app.get('/api/post/:id/:name', (req, res) => {
 });
 
 //query parameter
-app.get('/api/post/:id/', (req, res) => {
+app.get('/api/post/:id', (req, res) => {
     res.send(req.query);
 });
 
@@ -58,9 +58,33 @@ app.post('/api/courses', (req, res) => {
 });
 
 //PUT end point
+app.put('/api/courses/:Id', (req, res) => {
+    //look up the course first with the specifc Id
+    //not existing return 404
+    const result = courses.find(v => v.id === parseInt(req.params.Id));
+    if (!result) res.status(404).send('couldnot find any courses');
+    //check valid
+    const {error} = validateCourse(req.body.name);
+    console.log(error)
+    if (error) {
+        res.status(400).send(error);
+        return;
+    }
+    //update
+    result.name = req.body.name;
+    res.send(result);
+    console.log(courses);
+});
 
+//fun to validate course
+function validateCourse(course){
+    const schema = Joi.object({
+        name: Joi.string().required().min(3)
+    });
+    return schema.validate({ name: course });
+}
 
 
 //PORT
 const port = process.env.port || 3000;
-app.listen(port, () => console.log(`Listening to the port ${port}...`))
+app.listen(port, () => console.log(`Listening to the port ${port}...`));
